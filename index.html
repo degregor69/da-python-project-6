@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>JustStreamIt</title>
+    <link rel="icon" href="favicon.ico" type="image/x-icon" />
+    <script src="https://cdn.tailwindcss.com"></script>
+  </head>
+  <body class="bg-gray-100 font-sans w-[70%] mx-auto">
+    <!-- Header -->
+    <header class="bg-gray-500 text-white py-4">
+      <div class="container mx-auto flex items-center">
+        <img
+          src="assets/images/logo_light.png"
+          alt="JustStreamIt logo"
+          class="h-12"
+        />
+        <h1 class="text-xl font-bold">Vidéos à la demande</h1>
+      </div>
+    </header>
+
+    <!-- Meilleur film -->
+    <div class="mt-2">
+      <h2 class="text-2xl font-bold">Meilleur film</h2>
+      <div class="p-4 mt-2 mx-auto border-4 border-black">
+        <div class="flex items-start space-x-4">
+          <img
+            src="assets/images/the-big-lebowski.jpg"
+            alt="The Big Lebowski"
+            class="w-48 h-auto rounded-md shadow"
+          />
+          <div>
+            <h3 class="text-xl font-semibold">The Big Lebowski</h3>
+            <p class="text-gray-700 mt-2">
+              Jeff "The Dude" Lebowski, mistaken for a millionaire of the same
+              name, seeks restitution for his ruined rug and enlists his bowling
+              buddies to help get it.
+            </p>
+            <button
+              class="mt-4 bg-red-500 text-white px-4 py-2 rounded shadow hover:bg-red-600 ml-auto block"
+            >
+              Détails
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Catégorie 1 -->
+    <div class="p-4 my-6 mx-auto">
+      <h2 class="text-2xl font-bold mb-4">Catégorie 1</h2>
+      <div class="grid grid-cols-3 gap-4">
+        <div class="relative group">
+          <img
+            src="assets/images/titanic.jpg"
+            class="w-full max-h-[300px] object-cover rounded-md shadow"
+          />
+          <div
+            class="h-[100px] absolute top-1/3 left-0 right-0 transform -translate-y-1/2 bg-black bg-opacity-50 text-white opacity-0 group-hover:opacity-100 flex items-center justify-center font-bold transition"
+          >
+            <h3 class="text-white text-xl font-semibold mb-2">Titanic</h3>
+            <button
+              class="bg-gray-700 hover:bg-gray-900 text-white font-bold py-2 px-4 rounded-full ml-auto mt-auto mb-2 block"
+            >
+              Détails
+            </button>
+          </div>
+        </div>
+        <div class="relative group">
+            <img
+              src="assets/images/titanic.jpg"
+              class="w-full max-h-[300px] object-cover rounded-md shadow"
+            />
+            <div
+              class="h-[100px] absolute top-1/3 left-0 right-0 transform -translate-y-1/2 bg-black bg-opacity-50 text-white opacity-0 group-hover:opacity-100 flex items-center justify-center font-bold transition"
+            >
+              <h3 class="text-white text-xl font-semibold mb-2">Titanic</h3>
+              <button
+                class="bg-gray-700 hover:bg-gray-900 text-white font-bold py-2 px-4 rounded-full ml-auto mt-auto mb-2 block"
+              >
+                Détails
+              </button>
+            </div>
+          </div>
+          <div class="relative group">
+            <img
+              src="assets/images/titanic.jpg"
+              class="w-full max-h-[300px] object-cover rounded-md shadow"
+            />
+            <div
+              class="h-[100px] absolute top-1/3 left-0 right-0 transform -translate-y-1/2 bg-black bg-opacity-50 text-white opacity-0 group-hover:opacity-100 flex items-center justify-center font-bold transition"
+            >
+              <h3 class="text-white text-xl font-semibold mb-2">Titanic</h3>
+              <button
+                class="bg-gray-700 hover:bg-gray-900 text-white font-bold py-2 px-4 rounded-full ml-auto mt-auto mb-2 block"
+              >
+                Détails
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>
