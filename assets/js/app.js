@@ -2,6 +2,7 @@ document.addEventListener("DOMContentLoaded", function () {
   // --- Initialisation ---
   initDropdownMenu();
   initModalLogic();
+  getBestMovie();
 });
 
 function initDropdownMenu() {
@@ -51,4 +52,53 @@ function initModalLogic() {
       console.log("Modal closed by clicking outside"); // Debugging log
     }
   });
+}
+
+async function getBestMovie() {
+  const url = "http://localhost:8000/api/v1/titles/?imdb_score_min=9";
+
+  try {
+    const response = await fetch(url);
+    if (!response.ok) {
+      throw new Error("Network response was not ok");
+    }
+
+    const data = await response.json();
+    var bestMovie = findBestMovie(data.results);
+    bestMovie.description = await getMovieDescription(bestMovie);
+
+    displayBestMovie(bestMovie);
+  } catch (error) {
+    console.error("Error fetching the best movies:", error);
+  }
+}
+
+function findBestMovie(movies) {
+  // Reduce compares each film with current, if current imdb_score is better then current, becomes best
+  return movies.reduce((best, current) => {
+    return current.imdb_score > best.imdb_score ? current : best;
+  });
+}
+
+function displayBestMovie(movie) {
+  console.log(movie);
+  document.getElementById("best-movie-title").textContent = movie.title;
+  document.getElementById("best-movie-description").textContent =
+    movie.description;
+  document.getElementById("best-movie-image").src =
+    movie.image_url || "assets/images/default-image.jpg"; // Utilise une image par défaut si l'URL est manquante
+}
+
+async function getMovieDescription(movie) {
+  try {
+    const response = await fetch(movie.url);
+    if (!response.ok) {
+      throw new Error("Network response was not ok");
+    }
+
+    const data = await response.json();
+    return data.description || "Description not available";
+  } catch (error) {
+    console.error("Error fetching the details of the best movie", error);
+  }
 }
