@@ -1,5 +1,11 @@
 document.addEventListener("DOMContentLoaded", function () {
-  // --- Dropdown Menu Logic ---
+  // --- Initialisation ---
+  initDropdownMenu();
+  initModalLogic();
+});
+
+function initDropdownMenu() {
+  // Dropdown Menu Logic
   const button = document.getElementById("dropdown-button");
   const dropdown = button.nextElementSibling;
   const options = dropdown.querySelectorAll("li");
@@ -18,29 +24,31 @@ document.addEventListener("DOMContentLoaded", function () {
       dropdown.classList.add("hidden");
     });
   });
+}
 
-  // Sélectionnez les éléments
+function initModalLogic() {
+  // Modal Logic
   const detailsButton = document.getElementById("details-button");
   const modal = document.getElementById("modal");
   const closeModalButton = document.getElementById("close-modal");
 
-  // Afficher la modale lorsque le bouton "Détails" est cliqué
+  // Open modal when "Details" button is clicked
   detailsButton.addEventListener("click", () => {
-    modal.classList.remove("hidden"); // Affiche la modale
+    modal.classList.remove("hidden");
     console.log("Modal opened"); // Debugging log
   });
 
-  // Fermer la modale lorsque le bouton "X" est cliqué
+  // Close modal when "X" button is clicked
   closeModalButton.addEventListener("click", () => {
-    modal.classList.add("hidden"); // Cache la modale
+    modal.classList.add("hidden");
     console.log("Modal closed"); // Debugging log
   });
 
-  // Fermer la modale lorsque l'utilisateur clique en dehors du contenu
+  // Close modal when clicking outside the modal content
   modal.addEventListener("click", (event) => {
     if (event.target === modal) {
       modal.classList.add("hidden");
       console.log("Modal closed by clicking outside"); // Debugging log
     }
   });
-});
+}
