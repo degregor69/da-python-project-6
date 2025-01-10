@@ -1,8 +1,13 @@
 document.addEventListener("DOMContentLoaded", () => {
   // --- Initialization ---
+  const fixedCategory = "Action";
   initDropdownMenu();
   initModalLogic();
   getBestMovie();
+  getFourBestMoviesFromCategory(fixedCategory).then((movies) => {
+    initCategoryTitle(fixedCategory);
+    displayMoviesInExistingContainer(movies, "category-action");
+  });
 });
 
 const initDropdownMenu = () => {
@@ -105,36 +110,60 @@ const getMovieDescription = async (movie) => {
 const showMovieDetails = async () => {
   const detailsButton = document.getElementById("details-button");
 
-  // Check if the button exists and has the data-url attribute
-  if (!detailsButton || !detailsButton.hasAttribute("data-url")) {
+  if (!isValidDetailsButton(detailsButton)) {
     return;
   }
+
   const movieUrl = detailsButton.getAttribute("data-url");
 
   try {
-    const response = await fetch(movieUrl);
-    const data = await response.json();
-
-    // Fill all the modal fields with the details
-    document.getElementById("modal-title").textContent = data.title;
-    document.getElementById("modal-year").textContent = data.year;
-    document.getElementById("modal-genres").textContent =
-      data.genres.join(", ");
-    document.getElementById(
-      "modal-imdb-score"
-    ).textContent = `${data.imdb_score} / 10`;
-    document.getElementById("modal-directors").textContent =
-      data.directors.join(", ");
-    document.getElementById("modal-actors").textContent =
-      data.actors.join(", ");
-    document.getElementById("modal-description").textContent = data.description;
-
-    // Update the movie image
-    const modalImage = document.getElementById("modal-image");
-    modalImage.src = data.image_url || "assets/images/default-image.jpg";
-    modalImage.alt = data.title;
+    const data = await fetchMovieDetails(movieUrl);
+    populateModal(data);
   } catch (error) {
     console.error("Error fetching movie details:", error);
+  }
+};
+
+// Validate if the details button exists and has the data-url attribute
+const isValidDetailsButton = (button) => {
+  return button && button.hasAttribute("data-url");
+};
+
+// Fetch movie details from the API
+const fetchMovieDetails = async (url) => {
+  const response = await fetch(url);
+  if (!response.ok) {
+    throw new Error("Failed to fetch movie details");
+  }
+  return response.json();
+};
+
+// Populate the modal with movie details
+const populateModal = (data) => {
+  setTextContent("modal-title", data.title);
+  setTextContent("modal-year", data.year);
+  setTextContent("modal-genres", data.genres.join(", "));
+  setTextContent("modal-imdb-score", `${data.imdb_score} / 10`);
+  setTextContent("modal-directors", data.directors.join(", "));
+  setTextContent("modal-actors", data.actors.join(", "));
+  setTextContent("modal-description", data.description);
+  setModalImage(data.image_url, data.title);
+};
+
+// Helper function to set text content of an element
+const setTextContent = (elementId, content) => {
+  const element = document.getElementById(elementId);
+  if (element) {
+    element.textContent = content;
+  }
+};
+
+// Update the modal image
+const setModalImage = (imageUrl, altText) => {
+  const modalImage = document.getElementById("modal-image");
+  if (modalImage) {
+    modalImage.src = imageUrl || "assets/images/default-image.jpg";
+    modalImage.alt = altText || "Default image";
   }
 };
 
@@ -147,3 +176,63 @@ document
 document.getElementById("close-modal").addEventListener("click", () => {
   document.getElementById("modal").classList.add("hidden"); // Hide the modal
 });
+
+const getFourBestMoviesFromCategory = async (category) => {
+  // Define the API URL with filtering by genre, sorting by rating, and limiting results to 4
+  const url = `http://localhost:8000/api/v1/titles/?genre=${encodeURIComponent(
+    category
+  )}&sort_by=-imdb_score&page_size=4`;
+
+  try {
+    const response = await fetch(url);
+    const data = await response.json();
+
+    // Display the 4 best movies
+    console.log(data);
+    return data.results;
+  } catch (error) {
+    console.error("Error fetching the best movies from category:", error);
+  }
+};
+
+const displayMoviesInExistingContainer = (movies, containerId) => {
+  const container = document.getElementById(containerId);
+  if (!container) {
+    console.error(`Container with ID ${containerId} not found.`);
+    return;
+  }
+
+  container.innerHTML = ""; // Effacer le contenu précédent
+
+  movies.forEach((movie) => {
+    const movieElement = document.createElement("div");
+    movieElement.classList.add("relative", "group");
+
+    movieElement.innerHTML = `
+      <img
+        src="${movie.image_url || "assets/images/default-image.jpg"}"
+        class="w-full max-h-[300px] object-cover rounded-md shadow"
+        alt="${movie.title}"
+      />
+      <div
+        class="h-[100px] absolute top-1/3 left-0 right-0 transform -translate-y-1/2 bg-black bg-opacity-50 text-white opacity-0 group-hover:opacity-100 flex items-center justify-center font-bold transition"
+      >
+        <h3 class="text-white text-xl font-semibold mb-2">${movie.title}</h3>
+        <button
+          class="details-button bg-gray-700 hover:bg-gray-900 text-white font-bold py-2 px-4 rounded-full ml-auto mt-auto mb-2 block"
+          data-url="${movie.url}"
+        >
+          Détails
+        </button>
+      </div>
+    `;
+    container.appendChild(movieElement);
+  });
+};
+
+const initCategoryTitle = (category) => {
+  const categoryTitleElement = document.getElementById("first-category-title");
+  if (categoryTitleElement) {
+    categoryTitleElement.textContent = category;
+  }
+};
