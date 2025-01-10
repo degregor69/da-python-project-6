@@ -1,12 +1,12 @@
-document.addEventListener("DOMContentLoaded", function () {
-  // --- Initialisation ---
+document.addEventListener("DOMContentLoaded", () => {
+  // --- Initialization ---
   initDropdownMenu();
   initModalLogic();
   getBestMovie();
 });
 
-function initDropdownMenu() {
-  // Dropdown Menu Logic
+const initDropdownMenu = () => {
+  // Dropdown menu logic
   const button = document.getElementById("dropdown-button");
   const dropdown = button.nextElementSibling;
   const options = dropdown.querySelectorAll("li");
@@ -25,24 +25,23 @@ function initDropdownMenu() {
       dropdown.classList.add("hidden");
     });
   });
-}
+};
 
-function initModalLogic() {
-  // Modal Logic
+const initModalLogic = () => {
+  // Modal logic
   const detailsButton = document.getElementById("details-button");
   const modal = document.getElementById("modal");
   const closeModalButton = document.getElementById("close-modal");
 
-  // Open modal when "Details" button is clicked
+  // Open modal when the "Details" button is clicked
   detailsButton.addEventListener("click", () => {
+    showMovieDetails();
     modal.classList.remove("hidden");
-    console.log("Modal opened"); // Debugging log
   });
 
-  // Close modal when "X" button is clicked
+  // Close modal when the "X" button is clicked
   closeModalButton.addEventListener("click", () => {
     modal.classList.add("hidden");
-    console.log("Modal closed"); // Debugging log
   });
 
   // Close modal when clicking outside the modal content
@@ -52,9 +51,9 @@ function initModalLogic() {
       console.log("Modal closed by clicking outside"); // Debugging log
     }
   });
-}
+};
 
-async function getBestMovie() {
+const getBestMovie = async () => {
   const url = "http://localhost:8000/api/v1/titles/?imdb_score_min=9";
 
   try {
@@ -64,41 +63,87 @@ async function getBestMovie() {
     }
 
     const data = await response.json();
-    var bestMovie = findBestMovie(data.results);
+    const bestMovie = findBestMovie(data.results);
     bestMovie.description = await getMovieDescription(bestMovie);
 
     displayBestMovie(bestMovie);
   } catch (error) {
     console.error("Error fetching the best movies:", error);
   }
-}
+};
 
-function findBestMovie(movies) {
-  // Reduce compares each film with current, if current imdb_score is better then current, becomes best
+const findBestMovie = (movies) => {
+  // Reduce to find the movie with the best IMDb score
   return movies.reduce((best, current) => {
     return current.imdb_score > best.imdb_score ? current : best;
   });
-}
+};
 
-function displayBestMovie(movie) {
+const displayBestMovie = (movie) => {
   console.log(movie);
   document.getElementById("best-movie-title").textContent = movie.title;
   document.getElementById("best-movie-description").textContent =
     movie.description;
   document.getElementById("best-movie-image").src =
-    movie.image_url || "assets/images/default-image.jpg"; // Utilise une image par défaut si l'URL est manquante
-}
+    movie.image_url || "assets/images/default-image.jpg"; // Use default image if not available
 
-async function getMovieDescription(movie) {
+  // Update data-url of the best-film-details-button
+  const detailsButton = document.getElementById("details-button");
+  detailsButton.setAttribute("data-url", movie.url);
+};
+
+const getMovieDescription = async (movie) => {
   try {
     const response = await fetch(movie.url);
-    if (!response.ok) {
-      throw new Error("Network response was not ok");
-    }
-
     const data = await response.json();
     return data.description || "Description not available";
   } catch (error) {
     console.error("Error fetching the details of the best movie", error);
   }
-}
+};
+
+const showMovieDetails = async () => {
+  const detailsButton = document.getElementById("details-button");
+
+  // Check if the button exists and has the data-url attribute
+  if (!detailsButton || !detailsButton.hasAttribute("data-url")) {
+    return;
+  }
+  const movieUrl = detailsButton.getAttribute("data-url");
+
+  try {
+    const response = await fetch(movieUrl);
+    const data = await response.json();
+
+    // Fill all the modal fields with the details
+    document.getElementById("modal-title").textContent = data.title;
+    document.getElementById("modal-year").textContent = data.year;
+    document.getElementById("modal-genres").textContent =
+      data.genres.join(", ");
+    document.getElementById(
+      "modal-imdb-score"
+    ).textContent = `${data.imdb_score} / 10`;
+    document.getElementById("modal-directors").textContent =
+      data.directors.join(", ");
+    document.getElementById("modal-actors").textContent =
+      data.actors.join(", ");
+    document.getElementById("modal-description").textContent = data.description;
+
+    // Update the movie image
+    const modalImage = document.getElementById("modal-image");
+    modalImage.src = data.image_url || "assets/images/default-image.jpg";
+    modalImage.alt = data.title;
+  } catch (error) {
+    console.error("Error fetching movie details:", error);
+  }
+};
+
+// Add an event to the "Details" button
+document
+  .getElementById("details-button")
+  .addEventListener("click", showMovieDetails);
+
+// Code to close the modal
+document.getElementById("close-modal").addEventListener("click", () => {
+  document.getElementById("modal").classList.add("hidden"); // Hide the modal
+});

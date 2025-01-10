@@ -42,6 +42,7 @@
             <button
               id="details-button"
               class="mt-4 bg-red-500 text-white px-4 py-2 rounded shadow hover:bg-red-600 ml-auto block"
+              data-url=""
             >
               Détails
             </button>
@@ -144,49 +145,56 @@
       </div>
       <div class="grid grid-cols-3 gap-4"></div>
     </div>
+    <!-- Modal -->
     <div
       id="modal"
       class="hidden fixed inset-0 justify-center flex items-center"
     >
       <div
-        class="h-max-[75%] h-fit bg-white rounded-lg shadow-lg w-fit p-4 border-4 border-black"
+        class="h-max-[75%] h-fit bg-white rounded-lg shadow-lg w-[65%] p-4 border-4 border-black"
       >
         <div class="flex">
           <div>
-            <h1 class="text-xl font-bold mb-1">The Big Lebowski</h1>
+            <h1 id="modal-title" class="text-xl font-bold mb-1">
+              The Big Lebowski
+            </h1>
             <div class="flex flex-col mb-6">
               <div class="flex">
                 <h2 class="text-l font-bold mb -1 mr-1">Year</h2>
                 -
-                <h2 class="text-l font-bold mb-1 ml-1">Genres</h2>
+                <h2 id="modal-year" class="text-l font-bold mb-1 ml-1">1994</h2>
               </div>
               <div class="flex">
-                <h2 class="text-l font-bold mb-1 mr-1">Classification</h2>
-                -
-                <h2 class="text-l font-bold mb-1 ml-1 mr-1">Duration</h2>
-                <h2 class="text-l font-bold mb-1 ml-1">(Country)</h2>
+                <h2 class="text-l font-bold mb-1 mr-1">Genres</h2>
+                <h2 id="modal-genres" class="text-l font-bold mb-1 ml-1">
+                  Drama
+                </h2>
               </div>
               <div class="flex">
                 <h2 class="text-l font-bold mb-1 mr-1">IMDB score :</h2>
-                -
-                <h2 class="text-l font-bold mb-1 ml-1">score / 10</h2>
+                <h2 id="modal-imdb-score" class="text-l font-bold mb-1 ml-1">
+                  9.3 / 10
+                </h2>
               </div>
             </div>
             <div class="flex flex-col mb-6">
               <h2 class="text-l mb-1">Réalisé par :</h2>
-              <h2 class="text-l mb-1">Realisator</h2>
+              <h2 id="modal-directors" class="text-l mb-1"></h2>
             </div>
           </div>
           <img
-            src="assets/images/the-big-lebowski.jpg"
-            alt="The Big Lebowski"
+            id="modal-image"
+            src="assets/images/default-image.jpg"
+            alt="Film Image"
             class="w-48 ml-2 h-auto rounded-md shadow"
           />
         </div>
-        <div>Description of the film</div>
+        <div id="modal-description">Description of the film</div>
         <div class="flex flex-col mt-4">
           <div class="font-bold">Avec :</div>
-          <div>Actors</div>
+          <div id="modal-actors">
+            Bob Gunton, Brian Libby, Clancy Brown, ...
+          </div>
         </div>
         <div class="flex justify-center mt-4">
           <button
