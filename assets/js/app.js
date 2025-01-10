@@ -1,12 +1,15 @@
 document.addEventListener("DOMContentLoaded", () => {
-  // --- Initialization ---
-  const fixedCategory = "Action";
   initDropdownMenu();
   initModalLogic();
   getBestMovie();
-  getFourBestMoviesFromCategory(fixedCategory).then((movies) => {
-    initCategoryTitle(fixedCategory);
-    displayMoviesInExistingContainer(movies, "category-action");
+
+  // Fetch movies for each category and dynamically create sections
+  const categories = ["Sci-Fi", "Comedy"];
+  categories.forEach((category, index) => {
+    getFourBestMoviesFromCategory(category).then((movies) => {
+      createCategorySection(category, index); // Create the category section in the DOM
+      displayMoviesInExistingContainer(movies, `category-${index}`);
+    });
   });
 });
 
@@ -177,8 +180,8 @@ document.getElementById("close-modal").addEventListener("click", () => {
   document.getElementById("modal").classList.add("hidden"); // Hide the modal
 });
 
+// Fetch the best movies from a specific category
 const getFourBestMoviesFromCategory = async (category) => {
-  // Define the API URL with filtering by genre, sorting by rating, and limiting results to 4
   const url = `http://localhost:8000/api/v1/titles/?genre=${encodeURIComponent(
     category
   )}&sort_by=-imdb_score&page_size=4`;
@@ -186,15 +189,36 @@ const getFourBestMoviesFromCategory = async (category) => {
   try {
     const response = await fetch(url);
     const data = await response.json();
-
-    // Display the 4 best movies
-    console.log(data);
-    return data.results;
+    return data.results || [];
   } catch (error) {
     console.error("Error fetching the best movies from category:", error);
+    return [];
   }
 };
 
+const initCategoryTitle = (category) => {
+  const categoryTitleElement = document.getElementById("first-category-title");
+  if (categoryTitleElement) {
+    categoryTitleElement.textContent = category;
+  }
+};
+
+// Function to create the category section dynamically
+const createCategorySection = (category, index) => {
+  const container = document.getElementById("categories-container");
+
+  const categorySection = document.createElement("div");
+  categorySection.classList.add("p-4", "my-6");
+
+  categorySection.innerHTML = `
+    <h2 id="category-title-${index}" class="text-2xl font-bold mb-4">${category}</h2>
+    <div id="category-${index}" class="grid grid-cols-4 gap-4"></div>
+  `;
+
+  container.appendChild(categorySection);
+};
+
+// Function to display the fetched movies in the respective container
 const displayMoviesInExistingContainer = (movies, containerId) => {
   const container = document.getElementById(containerId);
   if (!container) {
@@ -202,37 +226,32 @@ const displayMoviesInExistingContainer = (movies, containerId) => {
     return;
   }
 
-  container.innerHTML = ""; // Effacer le contenu précédent
+  container.innerHTML = ""; // Clear the previous content
 
-  movies.forEach((movie) => {
-    const movieElement = document.createElement("div");
-    movieElement.classList.add("relative", "group");
+  if (Array.isArray(movies) && movies.length > 0) {
+    movies.forEach((movie) => {
+      const movieElement = document.createElement("div");
+      movieElement.classList.add("relative", "group");
 
-    movieElement.innerHTML = `
-      <img
-        src="${movie.image_url || "assets/images/default-image.jpg"}"
-        class="w-full max-h-[300px] object-cover rounded-md shadow"
-        alt="${movie.title}"
-      />
-      <div
-        class="h-[100px] absolute top-1/3 left-0 right-0 transform -translate-y-1/2 bg-black bg-opacity-50 text-white opacity-0 group-hover:opacity-100 flex items-center justify-center font-bold transition"
-      >
-        <h3 class="text-white text-xl font-semibold mb-2">${movie.title}</h3>
-        <button
-          class="details-button bg-gray-700 hover:bg-gray-900 text-white font-bold py-2 px-4 rounded-full ml-auto mt-auto mb-2 block"
-          data-url="${movie.url}"
-        >
-          Détails
-        </button>
-      </div>
-    `;
-    container.appendChild(movieElement);
-  });
-};
-
-const initCategoryTitle = (category) => {
-  const categoryTitleElement = document.getElementById("first-category-title");
-  if (categoryTitleElement) {
-    categoryTitleElement.textContent = category;
+      movieElement.innerHTML = `
+        <img
+          src="${movie.image_url || "assets/images/default-image.jpg"}"
+          class="w-full max-h-[300px] object-cover rounded-md shadow"
+          alt="${movie.title}"
+        />
+        <div class="h-[100px] absolute top-1/3 left-0 right-0 transform -translate-y-1/2 bg-black bg-opacity-50 text-white opacity-0 group-hover:opacity-100 flex items-center justify-center font-bold transition">
+          <h3 class="text-white text-xl font-semibold mb-2">${movie.title}</h3>
+          <button
+            class="details-button bg-gray-700 hover:bg-gray-900 text-white font-bold py-2 px-4 rounded-full ml-auto mt-auto mb-2 block"
+            data-url="${movie.url}"
+          >
+            Détails
+          </button>
+        </div>
+      `;
+      container.appendChild(movieElement);
+    });
+  } else {
+    container.innerHTML = "<p>Aucun film trouvé pour cette catégorie.</p>";
   }
 };
