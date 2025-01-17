@@ -1,62 +1,13 @@
 document.addEventListener("DOMContentLoaded", () => {
-  initDropdownMenu();
   getBestMovie();
-
-  // Fetch movies for each category and dynamically create sections
   const categories = ["Sci-Fi", "Comedy"];
   categories.forEach((category, index) => {
     getFourBestMoviesFromCategory(category).then((movies) => {
-      createCategorySection(category, index); // Create the category section in the DOM
+      createCategorySection(category, index, "fixed-categories-container"); // Create the category section in the DOM
       displayMoviesInExistingContainer(movies, `category-${index}`);
     });
   });
 });
-
-const initDropdownMenu = () => {
-  // Dropdown menu logic
-  const button = document.getElementById("dropdown-button");
-  const dropdown = button.nextElementSibling;
-  const options = dropdown.querySelectorAll("li");
-
-  // Toggle dropdown
-  button.addEventListener("click", () => {
-    dropdown.classList.toggle("hidden");
-  });
-
-  fetchAllGenres();
-
-  // Select and display the options
-  options.forEach((option) => {
-    option.addEventListener("click", () => {
-      button.textContent = option.getAttribute("data-option");
-
-      // Close dropdown after selection
-      dropdown.classList.add("hidden");
-    });
-  });
-};
-
-const fetchAllGenres = async () => {
-  let allGenres = [];
-  let nextPageUrl = "http://localhost:8000/api/v1/genres/?page=1";
-
-  // Continue fetching until there are no more pages
-  while (nextPageUrl) {
-    try {
-      const response = await fetch(nextPageUrl);
-      const data = await response.json();
-
-      allGenres = [...allGenres, ...data.results];
-
-      // Update nextPageUrl from the API response, is null if we are at the end
-      nextPageUrl = data.next;
-    } catch (error) {
-      console.error("Error fetching genres:", error);
-      break;
-    }
-  }
-  console.log(allGenres);
-};
 
 const getBestMovie = async () => {
   const url = "http://localhost:8000/api/v1/titles/?imdb_score_min=9";
@@ -106,20 +57,6 @@ const getMovieDescription = async (movie) => {
   }
 };
 
-// Validate if the details button exists and has the data-url attribute
-const isValidDetailsButton = (button) => {
-  return button && button.hasAttribute("data-url");
-};
-
-// Fetch movie details from the API
-const fetchMovieDetails = async (url) => {
-  const response = await fetch(url);
-  if (!response.ok) {
-    throw new Error("Failed to fetch movie details");
-  }
-  return response.json();
-};
-
 // Fetch the best movies from a specific category
 const getFourBestMoviesFromCategory = async (category) => {
   const url = `http://localhost:8000/api/v1/titles/?genre=${encodeURIComponent(
@@ -144,8 +81,8 @@ const initCategoryTitle = (category) => {
 };
 
 // Function to create the category section dynamically
-const createCategorySection = (category, index) => {
-  const container = document.getElementById("categories-container");
+const createCategorySection = (category, index, containerId) => {
+  const container = document.getElementById(containerId);
 
   const categorySection = document.createElement("div");
   categorySection.classList.add("p-4", "my-6");

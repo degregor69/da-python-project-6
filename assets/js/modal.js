@@ -25,6 +25,14 @@ const showMovieDetails = async (movieUrl) => {
   }
 };
 
+const fetchMovieDetails = async (url) => {
+  const response = await fetch(url);
+  if (!response.ok) {
+    throw new Error("Failed to fetch movie details");
+  }
+  return response.json();
+};
+
 const populateModal = (data) => {
   setTextContent("modal-title", data.title);
   setTextContent("modal-year", data.year);
