@@ -1,6 +1,5 @@
 document.addEventListener("DOMContentLoaded", () => {
   initDropdownMenu();
-  initModalLogic();
   getBestMovie();
 
   // Fetch movies for each category and dynamically create sections
@@ -24,6 +23,8 @@ const initDropdownMenu = () => {
     dropdown.classList.toggle("hidden");
   });
 
+  fetchAllGenres();
+
   // Select and display the options
   options.forEach((option) => {
     option.addEventListener("click", () => {
@@ -35,30 +36,26 @@ const initDropdownMenu = () => {
   });
 };
 
-const initModalLogic = () => {
-  // Modal logic
-  const detailsButton = document.getElementById("details-button");
-  const modal = document.getElementById("modal");
-  const closeModalButton = document.getElementById("close-modal");
+const fetchAllGenres = async () => {
+  let allGenres = [];
+  let nextPageUrl = "http://localhost:8000/api/v1/genres/?page=1";
 
-  // Open modal when the "Details" button is clicked
-  detailsButton.addEventListener("click", () => {
-    showMovieDetails();
-    modal.classList.remove("hidden");
-  });
+  // Continue fetching until there are no more pages
+  while (nextPageUrl) {
+    try {
+      const response = await fetch(nextPageUrl);
+      const data = await response.json();
 
-  // Close modal when the "X" button is clicked
-  closeModalButton.addEventListener("click", () => {
-    modal.classList.add("hidden");
-  });
+      allGenres = [...allGenres, ...data.results];
 
-  // Close modal when clicking outside the modal content
-  modal.addEventListener("click", (event) => {
-    if (event.target === modal) {
-      modal.classList.add("hidden");
-      console.log("Modal closed by clicking outside"); // Debugging log
+      // Update nextPageUrl from the API response, is null if we are at the end
+      nextPageUrl = data.next;
+    } catch (error) {
+      console.error("Error fetching genres:", error);
+      break;
     }
-  });
+  }
+  console.log(allGenres);
 };
 
 const getBestMovie = async () => {
@@ -88,7 +85,6 @@ const findBestMovie = (movies) => {
 };
 
 const displayBestMovie = (movie) => {
-  console.log(movie);
   document.getElementById("best-movie-title").textContent = movie.title;
   document.getElementById("best-movie-description").textContent =
     movie.description;
@@ -96,7 +92,7 @@ const displayBestMovie = (movie) => {
     movie.image_url || "assets/images/default-image.jpg"; // Use default image if not available
 
   // Update data-url of the best-film-details-button
-  const detailsButton = document.getElementById("details-button");
+  const detailsButton = document.getElementById("best-movie-details-button");
   detailsButton.setAttribute("data-url", movie.url);
 };
 
@@ -107,23 +103,6 @@ const getMovieDescription = async (movie) => {
     return data.description || "Description not available";
   } catch (error) {
     console.error("Error fetching the details of the best movie", error);
-  }
-};
-
-const showMovieDetails = async () => {
-  const detailsButton = document.getElementById("details-button");
-
-  if (!isValidDetailsButton(detailsButton)) {
-    return;
-  }
-
-  const movieUrl = detailsButton.getAttribute("data-url");
-
-  try {
-    const data = await fetchMovieDetails(movieUrl);
-    populateModal(data);
-  } catch (error) {
-    console.error("Error fetching movie details:", error);
   }
 };
 
@@ -140,45 +119,6 @@ const fetchMovieDetails = async (url) => {
   }
   return response.json();
 };
-
-// Populate the modal with movie details
-const populateModal = (data) => {
-  setTextContent("modal-title", data.title);
-  setTextContent("modal-year", data.year);
-  setTextContent("modal-genres", data.genres.join(", "));
-  setTextContent("modal-imdb-score", `${data.imdb_score} / 10`);
-  setTextContent("modal-directors", data.directors.join(", "));
-  setTextContent("modal-actors", data.actors.join(", "));
-  setTextContent("modal-description", data.description);
-  setModalImage(data.image_url, data.title);
-};
-
-// Helper function to set text content of an element
-const setTextContent = (elementId, content) => {
-  const element = document.getElementById(elementId);
-  if (element) {
-    element.textContent = content;
-  }
-};
-
-// Update the modal image
-const setModalImage = (imageUrl, altText) => {
-  const modalImage = document.getElementById("modal-image");
-  if (modalImage) {
-    modalImage.src = imageUrl || "assets/images/default-image.jpg";
-    modalImage.alt = altText || "Default image";
-  }
-};
-
-// Add an event to the "Details" button
-document
-  .getElementById("details-button")
-  .addEventListener("click", showMovieDetails);
-
-// Code to close the modal
-document.getElementById("close-modal").addEventListener("click", () => {
-  document.getElementById("modal").classList.add("hidden"); // Hide the modal
-});
 
 // Fetch the best movies from a specific category
 const getFourBestMoviesFromCategory = async (category) => {
@@ -229,6 +169,7 @@ const displayMoviesInExistingContainer = (movies, containerId) => {
   container.innerHTML = ""; // Clear the previous content
 
   if (Array.isArray(movies) && movies.length > 0) {
+    // TODO : faire un not et mettre le else ici à la place
     movies.forEach((movie) => {
       const movieElement = document.createElement("div");
       movieElement.classList.add("relative", "group");

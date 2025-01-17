@@ -40,8 +40,8 @@
               Film description
             </p>
             <button
-              id="details-button"
-              class="mt-4 bg-red-500 text-white px-4 py-2 rounded shadow hover:bg-red-600 ml-auto block"
+              id="best-movie-details-button"
+              class="details-button mt-4 bg-red-500 text-white px-4 py-2 rounded shadow hover:bg-red-600 ml-auto block"
               data-url=""
             >
               Détails
@@ -53,7 +53,7 @@
 
     <div id="categories-container" class="my-6 mx-auto"></div>
 
-    <!--Autres -->
+    <!-- Others Section -->
     <div class="p-4 my-6 mx-auto flex">
       <h2 class="text-2xl font-bold mb-4">Autres :</h2>
       <div class="inline-block relative ml-4">
@@ -61,37 +61,22 @@
         <button
           id="dropdown-button"
           class="px-4 py-2 bg-white border-2 border-black text-black font-semibold"
+          onclick="toggleDropdown()"
         >
-          Option 1
+          Liste des genres
         </button>
-        <!--Dropdown -->
+        <!-- Dropdown Menu -->
         <div
+          id="dropdown-menu"
           class="absolute left-0 w-full bg-white border-2 border-black shadow-md hidden"
         >
-          <ul>
-            <li
-              class="px-4 py-2 hover:bg-gray-100 cursor-pointer"
-              data-option="Option 1"
-            >
-              Option 1
-            </li>
-            <li
-              class="px-4 py-2 hover:bg-gray-100 cursor-pointer"
-              data-option="Option 2"
-            >
-              Option 2
-            </li>
-            <li
-              class="px-4 py-2 hover:bg-gray-100 cursor-pointer"
-              data-option="Option 3"
-            >
-              Option 3
-            </li>
+          <ul id="dropdown-list">
+            <!-- Options here -->
           </ul>
         </div>
       </div>
-      <div class="grid grid-cols-3 gap-4"></div>
     </div>
+
     <!-- Modal -->
     <div
       id="modal"
@@ -148,5 +133,6 @@
       </div>
     </div>
     <script src="assets/js/app.js"></script>
+    <script src="assets/js/modal.js"></script>
   </body>
 </html>
