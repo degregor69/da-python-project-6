@@ -48,7 +48,7 @@ const fetchAllGenres = async () => {
 
 const getDynamicMovies = async (selectedGenre) => {
   const index = 999;
-  const movies = await getFourBestMoviesFromCategory(selectedGenre);
+  const movies = await getMovies(6, selectedGenre, "-imdb_score");
   emptyDyanmicContainer();
   createCategorySection(selectedGenre, index, "dynamic-category-container");
   displayMoviesInExistingContainer(movies, `category-${index}`);

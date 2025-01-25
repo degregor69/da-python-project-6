@@ -1,16 +1,4 @@
-document.addEventListener("DOMContentLoaded", () => {
-  getMovies();
-  getBestMovie();
-  const categories = ["Sci-Fi", "Comedy"];
-  categories.forEach((category, index) => {
-    getFourBestMoviesFromCategory(category).then((movies) => {
-      createCategorySection(category, index, "fixed-categories-container");
-      displayMoviesInExistingContainer(movies, `category-${index}`);
-    });
-  });
-});
-
-const getMovies = async (pageSize, category, sortBy) => {
+const getMovies = async (pageSize, genre, sortBy) => {
   const baseUrl = "http://localhost:8000/api/v1/titles";
   const url = new URL(baseUrl);
 
@@ -18,8 +6,8 @@ const getMovies = async (pageSize, category, sortBy) => {
     url.searchParams.append("page_size", pageSize);
   }
 
-  if (category) {
-    url.searchParams.append("category", category);
+  if (genre) {
+    url.searchParams.append("genre", genre);
   }
 
   if (sortBy) {
@@ -38,50 +26,6 @@ const getMovies = async (pageSize, category, sortBy) => {
   }
 };
 
-const getBestMovie = async () => {
-  const bestMovieResponse = await getMovies(1, "", "-imdb_score");
-  const bestMovie = bestMovieResponse[0];
-  bestMovie.description = await getMovieDescription(bestMovie);
-  displayBestMovie(bestMovie);
-};
-
-const displayBestMovie = (movie) => {
-  document.getElementById("best-movie-title").textContent = movie.title;
-  document.getElementById("best-movie-description").textContent =
-    movie.description;
-  document.getElementById("best-movie-image").src =
-    movie.image_url || "assets/images/default-image.jpg"; // Use default image if not available
-
-  // Update data-url of the best-film-details-button
-  const detailsButton = document.getElementById("best-movie-details-button");
-  detailsButton.setAttribute("data-url", movie.url);
-};
-
-const getMovieDescription = async (movie) => {
-  try {
-    const response = await fetch(movie.url);
-    const data = await response.json();
-    return data.description || "Description not available";
-  } catch (error) {
-    console.error("Error fetching the details of the best movie", error);
-  }
-};
-
-const getFourBestMoviesFromCategory = async (category) => {
-  const url = `http://localhost:8000/api/v1/titles/?genre=${encodeURIComponent(
-    category
-  )}&sort_by=-imdb_score&page_size=4`;
-
-  try {
-    const response = await fetch(url);
-    const data = await response.json();
-    return data.results || [];
-  } catch (error) {
-    console.error("Error fetching the best movies from category:", error);
-    return [];
-  }
-};
-
 const initCategoryTitle = (category) => {
   const categoryTitleElement = document.getElementById("first-category-title");
   if (categoryTitleElement) {
@@ -97,7 +41,7 @@ const createCategorySection = (category, index, containerId) => {
 
   categorySection.innerHTML = `
     <h2 id="category-title-${index}" class="text-2xl font-bold mb-4">${category}</h2>
-    <div id="category-${index}" class="grid grid-cols-4 gap-4"></div>
+    <div id="category-${index}" class="grid grid-cols-3 grid-rows-2 gap-4"></div>
   `;
 
   container.appendChild(categorySection);
