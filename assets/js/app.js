@@ -1,38 +1,48 @@
 document.addEventListener("DOMContentLoaded", () => {
+  getMovies();
   getBestMovie();
   const categories = ["Sci-Fi", "Comedy"];
   categories.forEach((category, index) => {
     getFourBestMoviesFromCategory(category).then((movies) => {
-      createCategorySection(category, index, "fixed-categories-container"); // Create the category section in the DOM
+      createCategorySection(category, index, "fixed-categories-container");
       displayMoviesInExistingContainer(movies, `category-${index}`);
     });
   });
 });
 
-const getBestMovie = async () => {
-  const url = "http://localhost:8000/api/v1/titles/?imdb_score_min=9";
+const getMovies = async (pageSize, category, sortBy) => {
+  const baseUrl = "http://localhost:8000/api/v1/titles";
+  const url = new URL(baseUrl);
+
+  if (pageSize) {
+    url.searchParams.append("page_size", pageSize);
+  }
+
+  if (category) {
+    url.searchParams.append("category", category);
+  }
+
+  if (sortBy) {
+    url.searchParams.append("sort_by", sortBy);
+  }
 
   try {
     const response = await fetch(url);
     if (!response.ok) {
-      throw new Error("Network response was not ok");
+      throw new Error(`HTTP error! Status: ${response.status}`);
     }
-
     const data = await response.json();
-    const bestMovie = findBestMovie(data.results);
-    bestMovie.description = await getMovieDescription(bestMovie);
-
-    displayBestMovie(bestMovie);
+    return data.results;
   } catch (error) {
-    console.error("Error fetching the best movies:", error);
+    console.error("Error fetching the movies:", error);
   }
 };
 
-const findBestMovie = (movies) => {
-  // Reduce to find the movie with the best IMDb score
-  return movies.reduce((best, current) => {
-    return current.imdb_score > best.imdb_score ? current : best;
-  });
+const getBestMovie = async () => {
+  const bestMovieResponse = await getMovies(1, "", "-imdb_score");
+  const bestMovie = bestMovieResponse[0];
+  bestMovie.description = await getMovieDescription(bestMovie);
+  displayBestMovie(bestMovie);
 };
 
 const displayBestMovie = (movie) => {
@@ -57,7 +67,6 @@ const getMovieDescription = async (movie) => {
   }
 };
 
-// Fetch the best movies from a specific category
 const getFourBestMoviesFromCategory = async (category) => {
   const url = `http://localhost:8000/api/v1/titles/?genre=${encodeURIComponent(
     category
@@ -80,7 +89,6 @@ const initCategoryTitle = (category) => {
   }
 };
 
-// Function to create the category section dynamically
 const createCategorySection = (category, index, containerId) => {
   const container = document.getElementById(containerId);
 
@@ -95,7 +103,6 @@ const createCategorySection = (category, index, containerId) => {
   container.appendChild(categorySection);
 };
 
-// Function to display the fetched movies in the respective container
 const displayMoviesInExistingContainer = (movies, containerId) => {
   const container = document.getElementById(containerId);
   if (!container) {
@@ -103,10 +110,11 @@ const displayMoviesInExistingContainer = (movies, containerId) => {
     return;
   }
 
-  container.innerHTML = ""; // Clear the previous content
+  container.innerHTML = "";
 
-  if (Array.isArray(movies) && movies.length > 0) {
-    // TODO : faire un not et mettre le else ici à la place
+  if (!Array.isArray(movies) || movies.length === 0) {
+    container.innerHTML = "<p>Aucun film trouvé pour cette catégorie.</p>";
+  } else {
     movies.forEach((movie) => {
       const movieElement = document.createElement("div");
       movieElement.classList.add("relative", "group");
@@ -129,7 +137,5 @@ const displayMoviesInExistingContainer = (movies, containerId) => {
       `;
       container.appendChild(movieElement);
     });
-  } else {
-    container.innerHTML = "<p>Aucun film trouvé pour cette catégorie.</p>";
   }
 };
