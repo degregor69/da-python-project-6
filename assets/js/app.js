@@ -39,12 +39,31 @@ const createCategorySection = (category, index, containerId) => {
   const categorySection = document.createElement("div");
   categorySection.classList.add("p-4", "my-6");
 
+  // Définir une classe dynamique pour rows
+  const gridRowsClass =
+    window.innerWidth < 1024 ? "grid-rows-4" : "grid-rows-6";
+  const mdGridRowsClass =
+    window.innerWidth < 1024 ? "md:grid-rows-2" : "md:grid-rows-3";
+
+  const showMoreButtonHTML =
+    window.innerWidth < 1024
+      ? `<button id="show-more-${index}" class="justify-center mt-4 block bg-red-500 text-white px-4 py-2 rounded shadow hover:bg-red-600">Voir plus</button>`
+      : "";
+
   categorySection.innerHTML = `
-  <h2 id="category-title-${index}" class="text-2xl font-bold mb-4">${category}</h2>
-  <div id="category-${index}" class="grid grid-cols-1 grid-rows-6 gap-4 md:grid-cols-2 md:grid-rows-3 lg:grid-cols-3 lg:grid-rows-2"></div>
-`;
+      <h2 id="category-title-${index}" class="text-2xl font-bold mb-4">${category}</h2>
+      <div id="category-${index}" class="grid grid-cols-1 ${gridRowsClass} gap-4 md:grid-cols-2 md:${mdGridRowsClass} lg:grid-cols-3 lg:grid-rows-2"></div>
+      <div id="show-more-${index}" class="flex justify-center">${showMoreButtonHTML}</div>
+    `;
 
   container.appendChild(categorySection);
+
+  if (window.innerWidth < 1024) {
+    const showMoreButton = document.getElementById(`show-more-${index}`);
+    showMoreButton.addEventListener("click", () =>
+      toggleShowMore(showMoreButton.id)
+    );
+  }
 };
 
 const displayMoviesInExistingContainer = (movies, containerId) => {
@@ -59,9 +78,17 @@ const displayMoviesInExistingContainer = (movies, containerId) => {
   if (!Array.isArray(movies) || movies.length === 0) {
     container.innerHTML = "<p>Aucun film trouvé pour cette catégorie.</p>";
   } else {
-    movies.forEach((movie) => {
+    movies.forEach((movie, index) => {
       const movieElement = document.createElement("div");
       movieElement.classList.add("relative", "group");
+
+      if (
+        movies.length >= 6 &&
+        (index === 4 || index === 5) &&
+        window.innerWidth < 1024
+      ) {
+        movieElement.classList.add("hidden");
+      }
 
       movieElement.innerHTML = `
         <img
@@ -81,5 +108,35 @@ const displayMoviesInExistingContainer = (movies, containerId) => {
       `;
       container.appendChild(movieElement);
     });
+  }
+};
+
+const toggleShowMore = (buttonId) => {
+  console.log(`Bouton cliqué : ${buttonId}`);
+  const index = buttonId.split("-")[2];
+  const container = document.getElementById(`category-${index}`);
+
+  if (container) {
+    if (container.classList.contains("grid-rows-4")) {
+      container.classList.replace("grid-rows-4", "grid-rows-6");
+      container.classList.replace("md:grid-rows-2", "md:grid-rows-3");
+
+      const children = container.children;
+      if (children.length > 4) {
+        children[4].classList.remove("hidden");
+        children[5].classList.remove("hidden");
+      }
+    } else {
+      container.classList.replace("grid-rows-6", "grid-rows-4");
+      container.classList.replace("md:grid-rows-3", "md:grid-rows-2");
+
+      const children = container.children;
+      if (children.length > 4) {
+        children[4].classList.add("hidden");
+        children[5]?.classList.add("hidden");
+      }
+    }
+  } else {
+    console.error(`Aucun conteneur trouvé avec l'ID : category-${index}`);
   }
 };
