@@ -112,10 +112,9 @@ const displayMoviesInExistingContainer = (movies, containerId) => {
 };
 
 const toggleShowMore = (buttonId) => {
-  console.log(`Bouton cliqué : ${buttonId}`);
   const index = buttonId.split("-")[2];
   const container = document.getElementById(`category-${index}`);
-
+  const button = document.getElementById(`show-more-${index}`).firstChild;
   if (container) {
     if (container.classList.contains("grid-rows-4")) {
       container.classList.replace("grid-rows-4", "grid-rows-6");
@@ -125,6 +124,7 @@ const toggleShowMore = (buttonId) => {
       if (children.length > 4) {
         children[4].classList.remove("hidden");
         children[5].classList.remove("hidden");
+        button.innerText = "Voir moins";
       }
     } else {
       container.classList.replace("grid-rows-6", "grid-rows-4");
@@ -134,6 +134,7 @@ const toggleShowMore = (buttonId) => {
       if (children.length > 4) {
         children[4].classList.add("hidden");
         children[5]?.classList.add("hidden");
+        button.innerText = "Voir plus";
       }
     }
   } else {
