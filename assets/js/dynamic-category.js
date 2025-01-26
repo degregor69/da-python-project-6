@@ -49,6 +49,7 @@ const fetchAllGenres = async () => {
 const getDynamicMovies = async (selectedGenre) => {
   const index = 999;
   const movies = await getMovies(6, selectedGenre, "-imdb_score");
+  document.getElementById("dropdown-button").innerText = selectedGenre;
   emptyDyanmicContainer();
   createCategorySection(selectedGenre, index, "dynamic-category-container");
   displayMoviesInExistingContainer(movies, `category-${index}`);

@@ -67,9 +67,10 @@ const displayModal = () => {
 };
 
 // Closing Modal
-
-document.getElementById("close-modal").addEventListener("click", () => {
-  closeModal();
+document.querySelectorAll(".close-modal").forEach((element) => {
+  element.addEventListener("click", () => {
+    closeModal();
+  });
 });
 
 const closeModal = () => {

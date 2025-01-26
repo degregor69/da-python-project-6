@@ -40,9 +40,9 @@ const createCategorySection = (category, index, containerId) => {
   categorySection.classList.add("p-4", "my-6");
 
   categorySection.innerHTML = `
-    <h2 id="category-title-${index}" class="text-2xl font-bold mb-4">${category}</h2>
-    <div id="category-${index}" class="grid grid-cols-3 grid-rows-2 gap-4"></div>
-  `;
+  <h2 id="category-title-${index}" class="text-2xl font-bold mb-4">${category}</h2>
+  <div id="category-${index}" class="grid grid-cols-1 grid-rows-6 gap-4 md:grid-cols-2 md:grid-rows-3 lg:grid-cols-3 lg:grid-rows-2"></div>
+`;
 
   container.appendChild(categorySection);
 };
@@ -65,12 +65,12 @@ const displayMoviesInExistingContainer = (movies, containerId) => {
 
       movieElement.innerHTML = `
         <img
-          src="${movie.image_url || "assets/images/default-image.jpg"}"
-          class="w-full max-h-[300px] object-cover rounded-md shadow"
+          src="${movie.image_url}"
+          class="w-full max-h-[150px] lg:max-h-[300px] object-cover rounded-md shadow"
           alt="${movie.title}"
         />
-        <div class="h-[100px] absolute top-1/3 left-0 right-0 transform -translate-y-1/2 bg-black bg-opacity-50 text-white opacity-0 group-hover:opacity-100 flex items-center justify-center font-bold transition">
-          <h3 class="text-white text-xl font-semibold mb-2">${movie.title}</h3>
+        <div class="h-[50px] lg:h-[100px] absolute top-1/3 left-0 right-0 transform -translate-y-1/2 bg-black bg-opacity-50 text-white opacity-0 group-hover:opacity-100 flex items-center justify-center font-bold transition">
+          <h3 class="text-white font-bold m-2">${movie.title}</h3>
           <button
             class="details-button bg-gray-700 hover:bg-gray-900 text-white font-bold py-2 px-4 rounded-full ml-auto mt-auto mb-2 block"
             data-url="${movie.url}"

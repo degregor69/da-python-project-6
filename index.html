@@ -25,27 +25,31 @@
     <div class="mt-2">
       <h2 class="text-2xl font-bold">Meilleur film</h2>
       <div class="p-4 mt-2 mx-auto border-4 border-black">
-        <div class="flex items-start space-x-4">
+        <div
+          class="flex flex-col items-center md:flex-row md:space-x-4 space-y-4 md:space-y-0"
+        >
           <img
             id="best-movie-image"
             src=""
             alt="Film Image"
-            class="w-48 h-auto rounded-md shadow"
+            class="w-24 h-auto rounded-md shadow sm:w-24 md:w-40 lg:w-48"
           />
-          <div>
+          <div class="flex flex-col">
             <h3 id="best-movie-title" class="text-xl font-semibold">
               Film Title
             </h3>
             <p id="best-movie-description" class="text-gray-700 mt-2">
               Film description
             </p>
-            <button
-              id="best-movie-details-button"
-              class="details-button mt-4 bg-red-500 text-white px-4 py-2 rounded shadow hover:bg-red-600 ml-auto block"
-              data-url=""
-            >
-              Détails
-            </button>
+            <div class="flex flex-end">
+              <button
+                id="best-movie-details-button"
+                class="details-button mt-4 bg-red-500 text-white px-4 py-2 rounded shadow hover:bg-red-600 block"
+                data-url=""
+              >
+                Détails
+              </button>
+            </div>
           </div>
         </div>
       </div>
@@ -85,55 +89,89 @@
       class="hidden fixed inset-0 justify-center flex items-center z-50"
     >
       <div
-        class="h-max-[75%] h-fit bg-white rounded-lg shadow-lg w-[55%] p-4 border-4 border-black"
+        class="h-fit h-max-[50%] w-[65%] overflow-auto md:h-max-[60%] lg:h-max-[70%] bg-white rounded-lg shadow-lg p-4 border-4 border-black relative"
       >
-        <div class="flex">
+        <!-- Corss button to close for small screens -->
+        <button
+          class="close-modal lg:hidden sm: absolute top-4 right-4 bg-transparent text-black text-2xl font-bold hover:text-red-500"
+        >
+          &times;
+        </button>
+
+        <!-- Contenu de la modale -->
+        <div class="sm:flex p-4 lg:flex">
           <div>
-            <h1 id="modal-title" class="text-xl font-bold mb-1">Title</h1>
+            <h1
+              id="modal-title"
+              class="text-xs md:text-base lg:text-xl font-bold mb-1"
+            >
+              Title
+            </h1>
             <div class="flex flex-col mb-6">
               <div class="flex">
-                <h2 id="modal-year" class="text-l font-bold mb -1 mr-1">
+                <h2
+                  id="modal-year"
+                  class="text-xs md:text-base lg:text-l font-bold mb -1 mr-1"
+                >
                   Year
                 </h2>
                 -
-                <h2 id="modal-genres" class="text-l font-bold mb-1 mr-1">
+                <h2
+                  id="modal-genres"
+                  class="text-xs md:text-base lg:text-l font-bold mb-1 mr-1"
+                >
                   Genres
                 </h2>
               </div>
               <div class="flex">
-                <h2 class="text-l font-bold mb-1 mr-1">IMDB score :</h2>
-                <h2 id="modal-imdb-score" class="text-l font-bold mb-1 ml-1">
+                <h2 class="text-xs md:text-base lg:text-l font-bold mb-1 mr-1">
+                  IMDB score :
+                </h2>
+                <h2
+                  id="modal-imdb-score"
+                  class="text-xs md:text-base lg:text-l font-bold mb-1 ml-1"
+                >
                   Score / 10
                 </h2>
               </div>
             </div>
             <div class="flex flex-col mb-6">
-              <h2 class="text-l mb-1">Réalisé par :</h2>
-              <h2 id="modal-directors" class="text-l mb-1"></h2>
+              <h2 class="text-xs md:text-base lg:text-l mb-1">Réalisé par :</h2>
+              <h2
+                id="modal-directors"
+                class="text-xs md:text-base lg:text-l mb-1"
+              ></h2>
             </div>
           </div>
           <img
             id="modal-image"
-            src="assets/images/default-image.jpg"
             alt="Film Image"
-            class="w-48 mb-4 ml-auto h-auto rounded-md shadow self-start"
+            class="w-24 lg:w-48 mb-4 ml-auto h-auto rounded-md shadow self-start"
           />
         </div>
-        <div id="modal-description">Description of the film</div>
+        <div
+          id="modal-description"
+          class="h-max-[20%] overflow-auto text-xs md:text-base lg:text-l"
+        >
+          Description of the film
+        </div>
         <div class="flex flex-col mt-4">
-          <div class="font-bold">Avec :</div>
-          <div id="modal-actors">Actors</div>
+          <div class="font-bold text-xs md:text-base lg:text-l">Avec :</div>
+          <div id="modal-actors" class="text-xs md:text-base lg:text-l">
+            Actors
+          </div>
         </div>
         <div class="flex justify-center mt-4">
+          <!-- Bouton Fermer pour petits écrans -->
           <button
-            id="close-modal"
-            class="bg-red-500 text-white px-4 py-2 rounded shadow hover:bg-red-600"
+            class="close-modal hidden lg:block bg-red-500 text-white px-4 py-2 rounded shadow hover:bg-red-600"
           >
             Fermer
           </button>
         </div>
       </div>
     </div>
+
     <script src="assets/js/app.js"></script>
     <script src="assets/js/modal.js"></script>
     <script src="assets/js/dynamic-category.js"></script>
