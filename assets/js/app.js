@@ -92,14 +92,21 @@ const displayMoviesInExistingContainer = (movies, containerId) => {
       }
 
       movieElement.innerHTML = `
-      <article class="flex flex-col items-center">
-        <img src="${movie.image_url}" class="w-full max-h-[150px] lg:max-h-[300px] object-cover rounded-md shadow" alt="Affiche du film ${movie.title}" />
-        <header class="h-1/3 absolute top-1/3 left-0 right-0 transform -translate-y-1/2 bg-black bg-opacity-50 text-white opacity-0 group-hover:opacity-100 flex items-center justify-center font-bold transition">
-          <h3 class="text-white font-bold m-2">${movie.title}</h3>
-          <button class="details-button bg-gray-700 hover:bg-gray-900 text-white font-bold py-2 px-4 rounded-full ml-auto mt-auto mb-2 block" data-url="${movie.url}">Détails</button>
-        </header>
-      </article>
-  `;
+  <article class="flex flex-col items-center">
+    <img 
+      src="${movie.image_url || "https://picsum.photos/400/400"}" 
+      class="w-full max-h-[150px] lg:max-h-[300px] object-cover rounded-md shadow" 
+      alt="Affiche du film ${movie.title}" 
+      onError="this.onerror=null; this.src='https://picsum.photos/200/300';" />
+    <header class="h-1/3 absolute top-1/3 left-0 right-0 transform -translate-y-1/2 bg-black bg-opacity-50 text-white opacity-0 group-hover:opacity-100 flex items-center justify-center font-bold transition">
+      <h3 class="text-white font-bold m-2">${movie.title}</h3>
+      <button class="details-button bg-gray-700 hover:bg-gray-900 text-white font-bold py-2 px-4 rounded-full ml-auto mt-auto mb-2 block" data-url="${
+        movie.url
+      }">Détails</button>
+    </header>
+  </article>
+`;
+
       container.appendChild(movieElement);
     });
   }
