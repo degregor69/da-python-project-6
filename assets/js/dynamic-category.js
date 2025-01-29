@@ -8,24 +8,30 @@ document.addEventListener("DOMContentLoaded", async () => {
 });
 
 const toggleDropdown = () => {
-  displayList();
+  const dropdownMenu = document.getElementById("dropdown-menu");
+  const dropdownButton = document.getElementById("dropdown-button");
+
+  const isExpanded = dropdownButton.getAttribute("aria-expanded") === "true";
+  dropdownButton.setAttribute("aria-expanded", !isExpanded);
+  dropdownMenu.classList.toggle("hidden");
 };
 
 const populateGenresList = (genres) => {
-  const dropdownList = document.getElementById("dropdown-list");
+  const dropdownList = document.getElementById("dropdown-menu");
   dropdownList.innerHTML = "";
 
   genres.forEach((genre) => {
     const li = document.createElement("li");
     li.textContent = genre.name;
-    li.setAttribute("onclick", `getDynamicMovies('${genre.name}')`);
+    li.setAttribute("role", "menuitem");
+    li.addEventListener("click", () => getDynamicMovies(genre.name));
+    li.addEventListener("keydown", (event) => {
+      if (event.key === "Enter" || event.key === " ") {
+        getDynamicMovies(genre.name);
+      }
+    });
     dropdownList.appendChild(li);
   });
-};
-
-const displayList = () => {
-  const dropdownMenu = document.getElementById("dropdown-menu");
-  dropdownMenu.classList.toggle("hidden");
 };
 
 const fetchAllGenres = async () => {
@@ -49,39 +55,33 @@ const fetchAllGenres = async () => {
 const getDynamicMovies = async (selectedGenre) => {
   const index = 999;
   const movies = await getMovies(6, selectedGenre, "-imdb_score");
-  document.getElementById("dropdown-button").innerText = selectedGenre;
-  emptyDyanmicContainer();
+  const dropdownButton = document.getElementById("dropdown-button");
+
+  dropdownButton.innerText = selectedGenre;
+  emptyDynamicContainer();
   createCategorySection(selectedGenre, index, "dynamic-category-container");
   displayMoviesInExistingContainer(movies, `category-${index}`);
   closeDropdown();
 };
 
-const emptyDyanmicContainer = () => {
-  const dynamicCategoryContainer = document.getElementById(
-    "dynamic-category-container"
-  );
-  dynamicCategoryContainer.innerHTML = "";
+const emptyDynamicContainer = () => {
+  document.getElementById("dynamic-category-container").innerHTML = "";
 };
 
-const selectGenre = () => {
-  const dropdownList = document.getElementById("dropdown-list");
-  dropdownList.addEventListener("click", (e) => {
-    const clickedItem = e.target;
-    return clickedItem.textContent;
-  });
-};
-
-// Close dropdown functions
 const closeDropdownIfClickedOutside = (event) => {
   const dropdownMenu = document.getElementById("dropdown-menu");
   const dropdownButton = document.getElementById("dropdown-button");
 
   if (!dropdownMenu.contains(event.target) && event.target !== dropdownButton) {
+    closeDropdown();
   }
 };
 document.addEventListener("click", closeDropdownIfClickedOutside);
 
 const closeDropdown = () => {
   const dropdownMenu = document.getElementById("dropdown-menu");
+  const dropdownButton = document.getElementById("dropdown-button");
+
   dropdownMenu.classList.add("hidden");
+  dropdownButton.setAttribute("aria-expanded", "false");
 };
