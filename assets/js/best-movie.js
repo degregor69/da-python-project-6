@@ -14,7 +14,7 @@ const displayBestMovie = (movie) => {
   document.getElementById("best-movie-description").textContent =
     movie.description;
   document.getElementById("best-movie-image").src =
-    movie.image_url || "assets/images/default-image.jpg"; // Use default image if not available
+    movie.image_url || "assets/images/default-image.jpg";
 
   // Update data-url of the best-film-details-button
   const detailsButton = document.getElementById("best-movie-details-button");

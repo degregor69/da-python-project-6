@@ -36,10 +36,9 @@ const initCategoryTitle = (category) => {
 const createCategorySection = (category, index, containerId) => {
   const container = document.getElementById(containerId);
 
-  const categorySection = document.createElement("div");
+  const categorySection = document.createElement("section");
   categorySection.classList.add("p-4", "my-6");
 
-  // Définir une classe dynamique pour rows
   const gridRowsClass =
     window.innerWidth < 1024 ? "grid-rows-4" : "grid-rows-6";
   const mdGridRowsClass =
@@ -51,8 +50,10 @@ const createCategorySection = (category, index, containerId) => {
       : "";
 
   categorySection.innerHTML = `
-      <h2 id="category-title-${index}" class="text-2xl font-bold mb-4">${category}</h2>
-      <div id="category-${index}" class="grid grid-cols-1 ${gridRowsClass} gap-4 md:grid-cols-2 md:${mdGridRowsClass} lg:grid-cols-3 lg:grid-rows-2"></div>
+      <header>
+        <h2 id="category-title-${index}" class="text-2xl font-bold mb-4">${category}</h2>
+      </header>
+      <ul id="category-${index}" class="grid grid-cols-1 ${gridRowsClass} gap-4 md:grid-cols-2 md:${mdGridRowsClass} lg:grid-cols-3 lg:grid-rows-2" aria-label="Liste des films"></ul>
       <div id="show-more-${index}" class="flex justify-center">${showMoreButtonHTML}</div>
     `;
 
@@ -79,8 +80,8 @@ const displayMoviesInExistingContainer = (movies, containerId) => {
     container.innerHTML = "<p>Aucun film trouvé pour cette catégorie.</p>";
   } else {
     movies.forEach((movie, index) => {
-      const movieElement = document.createElement("div");
-      movieElement.classList.add("relative", "group");
+      const movieElement = document.createElement("li");
+      movieElement.classList.add("relative", "group", "list-none");
 
       if (
         movies.length >= 6 &&
@@ -91,21 +92,14 @@ const displayMoviesInExistingContainer = (movies, containerId) => {
       }
 
       movieElement.innerHTML = `
-        <img
-          src="${movie.image_url}"
-          class="w-full max-h-[150px] lg:max-h-[300px] object-cover rounded-md shadow"
-          alt="${movie.title}"
-        />
-        <div class="h-[50px] lg:h-[100px] absolute top-1/3 left-0 right-0 transform -translate-y-1/2 bg-black bg-opacity-50 text-white opacity-0 group-hover:opacity-100 flex items-center justify-center font-bold transition">
+      <article class="flex flex-col items-center">
+        <img src="${movie.image_url}" class="w-full max-h-[150px] lg:max-h-[300px] object-cover rounded-md shadow" alt="Affiche du film ${movie.title}" />
+        <header class="h-1/3 absolute top-1/3 left-0 right-0 transform -translate-y-1/2 bg-black bg-opacity-50 text-white opacity-0 group-hover:opacity-100 flex items-center justify-center font-bold transition">
           <h3 class="text-white font-bold m-2">${movie.title}</h3>
-          <button
-            class="details-button bg-gray-700 hover:bg-gray-900 text-white font-bold py-2 px-4 rounded-full ml-auto mt-auto mb-2 block"
-            data-url="${movie.url}"
-          >
-            Détails
-          </button>
-        </div>
-      `;
+          <button class="details-button bg-gray-700 hover:bg-gray-900 text-white font-bold py-2 px-4 rounded-full ml-auto mt-auto mb-2 block" data-url="${movie.url}">Détails</button>
+        </header>
+      </article>
+  `;
       container.appendChild(movieElement);
     });
   }
