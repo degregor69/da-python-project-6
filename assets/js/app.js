@@ -48,7 +48,7 @@ const createCategorySection = (category, index, containerId) => {
         <h2 id="category-title-${index}" class="text-2xl font-bold mb-4">${category}</h2>
       </header>
       <ul id="category-${index}" class="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3" aria-label="Liste des films"></ul>
-      <div id="show-more-${index}" class="flex justify-center">${showMoreButtonHTML}</div>
+      <div class="flex justify-center">${showMoreButtonHTML}</div>
     `;
 
   container.appendChild(categorySection);
