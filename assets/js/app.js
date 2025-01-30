@@ -126,5 +126,3 @@ const toggleShowMore = (buttonId) => {
     button.innerText = "Voir plus";
   }
 };
-
-document.addEventListener();
